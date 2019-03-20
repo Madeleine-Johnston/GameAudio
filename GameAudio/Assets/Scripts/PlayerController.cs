@@ -48,6 +48,10 @@ public class PlayerController : MonoBehaviour
         {
             rb.Sleep();
         }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(new Vector3(0, 5, 0), ForceMode.Impulse);
+        }
 
     }
 
