@@ -50,9 +50,17 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            rb.AddForce(new Vector3(0, 5, 0), ForceMode.Impulse);
+            rb.AddForce(new Vector3(0, 2, 0), ForceMode.Impulse);
         }
 
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.name == "Manzana_2")
+        {
+            Destroy(col.gameObject);
+        }
     }
 
     void LateUpdate()
