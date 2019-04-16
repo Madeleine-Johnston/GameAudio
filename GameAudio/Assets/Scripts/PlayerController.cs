@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour
     private float pitch = 0.0F;
     private float yaw = 0.0F;
 
+    public AudioClip collectableSound;
+    public AudioSource source;
+
 
 
     void Start()
@@ -58,9 +61,10 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.name == "Manzana_2")
+        if (col.gameObject.name == "Collectable" || col.gameObject.name == "Collectable1" || col.gameObject.name == "Collectable2" || col.gameObject.name == "Collectable3")
         {
             Destroy(col.gameObject);
+            source.PlayOneShot(collectableSound, 1.0f);
         }
     }
 
