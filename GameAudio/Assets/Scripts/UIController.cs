@@ -7,14 +7,16 @@ public class UIController : MonoBehaviour
 {
 
     //public string nextScene;
-    public Animator cameraAnim;
+    //public Animator uiAnim;
     public GameObject panel;
 
     public bool isOn;
 
     void Start()
     {
-       cameraAnim = GetComponent<Animator>();
+       //cameraAnim = GetComponent<Animator>();
+       //uiAnim = GetComponent<Animator>();
+
     }
     public void Quit()
     {
@@ -33,7 +35,8 @@ public class UIController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.P)){
             Pause();
-            panel.SetActive(!isOn);
+            panel.SetActive(!panel.activeInHierarchy);
+            //uiAnim.Play("PlayHover");
         }
     }
 
@@ -50,7 +53,7 @@ public class UIController : MonoBehaviour
 		}
     }
 
-    /*public void CameraZoom(){
-        cameraAnim.SetTrigger("CameraZoom");
+    /*public void HandleLayers(){
+        uiAnim.SetLayerWeight(1,1);
     }*/
 }
