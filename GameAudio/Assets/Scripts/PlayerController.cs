@@ -12,17 +12,16 @@ public class PlayerController : MonoBehaviour
     private float zForce;
     private Vector3 force;
 
-    
-    public float lookSpeed = 3;
-    private Vector2 rotation = Vector2.zero;
-
     private float pitch = 0.0F;
     private float yaw = 0.0F;
 
     public AudioClip collectableSound;
+    public AudioClip sandSound;
     public AudioSource source;
+    public AudioSource source2;
 
-
+    public bool walking;
+    private string floortag;
 
     void Start()
     {
@@ -38,6 +37,13 @@ public class PlayerController : MonoBehaviour
 
         pitch -= Input.GetAxis("Mouse Y");
         yaw += Input.GetAxis("Mouse X");
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+        {
+            Debug.Log("walking");
+            walking = true;
+        }
+        else walking = false;
 
         //stops the player from rolling on a slope when no longer pressing the keys
         if (Input.GetKeyUp(KeyCode.W))
@@ -61,6 +67,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(new Vector3(0, 2, 0), ForceMode.Impulse);
         }
 
+        walkingAudio();
 
     }
 
@@ -73,6 +80,30 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    public void walkingAudio()
+    {
+        if (walking == true)
+        {
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out hit))
+            {
+                floortag = hit.collider.gameObject.tag;
+                if (floortag == "SandGround")
+                {
+                    Debug.Log("playnig footsteps");
+                    source2.clip = sandSound;
+                    source2.Play();
+                }
+                //else if (floortag == "Water")
+                //{
+                //    //play Water sound code
+                //}
+            }
+        }
+    }
+
     void LateUpdate()
     {
         //applies force
@@ -80,7 +111,6 @@ public class PlayerController : MonoBehaviour
 
         // rotate object to face mouse direction
         rb.transform.localEulerAngles = new Vector3(0.0f, yaw, 0.0F);
-        //rb.transform.localEulerAngles = new Vector3(pitch, 0.0f, 0.0F);
 
         // move object in facing direction relative to local (AddRelative) not world (AddForce) coordinates
         rb.AddRelativeForce(force);
@@ -88,4 +118,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
+
 }
+
