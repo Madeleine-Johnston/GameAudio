@@ -6,9 +6,15 @@ using UnityEngine.SceneManagement;
 public class UIController : MonoBehaviour
 {
 
-    //public string nextScene;
-    //public Animator uiAnim;
-    public GameObject panel;
+    //public GameObject panel, fadePanel;
+
+    public AudioClip uiClick;
+
+    public GameObject fadePanel;
+
+    public string nextScene;
+
+    public AudioSource source1;
 
     public bool isOn;
 
@@ -16,7 +22,7 @@ public class UIController : MonoBehaviour
     {
        //cameraAnim = GetComponent<Animator>();
        //uiAnim = GetComponent<Animator>();
-
+        //fadeAnim = GetComponent<Animator>();
     }
     public void Quit()
     {
@@ -25,35 +31,28 @@ public class UIController : MonoBehaviour
         Application.Quit();
     }
 
-    public void ChangeScene(string nextScene){
+    public void ChangeScene(){
 		Debug.Log("Changing to scene: " + nextScene);
         SceneManager.LoadScene(nextScene);
         //Invoke("DelayedAction", 3);
 	}	
 
-    public void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.P)){
-            Pause();
-            panel.SetActive(!panel.activeInHierarchy);
-            //uiAnim.Play("PlayHover");
-        }
+    public void Fade(){
+		fadePanel.SetActive(true);
+		//fadeAnim.SetTrigger("fade");
+
+		Invoke("ChangeScene", 3);
+		//StartCoroutine(ExecuteAfterTime());
+		
+		//fadeAnim.SetBool("homeFade", true);
+	}
+
+    public void ClickSounds(){
+        Debug.Log("Button clicked");
+        source1.PlayOneShot(uiClick, 1.0f);
     }
 
 
-    //credit to Vincent Quarles for pause piece of code
-    //https://www.sitepoint.com/adding-pause-main-menu-and-game-over-screens-in-unity/
 
-    public void Pause(){
-        if(Time.timeScale == 1)
-		{
-			Time.timeScale = 0;
-		} else if (Time.timeScale == 0){
-			Time.timeScale = 1;	
-		}
-    }
-
-    /*public void HandleLayers(){
-        uiAnim.SetLayerWeight(1,1);
-    }*/
+ 
 }

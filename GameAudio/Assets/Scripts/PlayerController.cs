@@ -2,63 +2,66 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-//new
+
 public class PlayerController : MonoBehaviour
 {
 
+    private Rigidbody rb;
+
+    private float xForce;
+    private float zForce;
+    private Vector3 force;
+
+    
+    public float lookSpeed = 3;
+    private Vector2 rotation = Vector2.zero;
+
+    private float pitch = 0.0F;
+    private float yaw = 0.0F;
 
     public AudioClip collectableSound;
-    public AudioClip sandSound;
-    public AudioClip jumpSound;
-    public AudioClip waterWalking;
-    //colleactable
     public AudioSource source;
-    //walking
-    public AudioSource source2;
-
-    public bool walking;
-    public bool sandGround;
-    public bool waterGround;
-    public bool dirtGround;
-    public string floortag;
-    public float health;
-    public int appleCollection;
-    public int waterCollection;
-
-    public Text appleCollectionText;
-    public Text waterCollectionText;
 
 
-    public Slider healthSlider;
-
-    public AudioClip[] footsteps;
-    public AudioClip[] waterSteps;
 
     void Start()
     {
-        health = 10;
-        appleCollection = 0;
-        waterCollection = 0;
+        rb = GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
     {
+        //takes information about positions from the current scene
+        //to be used in movement calculations
+        xForce = Input.GetAxis("Horizontal");
+        zForce = Input.GetAxis("Vertical");
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+        pitch -= Input.GetAxis("Mouse Y");
+        yaw += Input.GetAxis("Mouse X");
+
+        //stops the player from rolling on a slope when no longer pressing the keys
+        if (Input.GetKeyUp(KeyCode.W))
         {
-            Debug.Log("walking");
-            walking = true;
-            walkingAudio();
+            rb.Sleep();
+        }
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            rb.Sleep();
+        }
+        if (Input.GetKeyUp(KeyCode.S))
+        {
+            rb.Sleep();
+        }
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            rb.Sleep();
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(new Vector3(0, 2, 0), ForceMode.Impulse);
         }
 
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
-        {
-            Debug.Log("stop walking");
-            walking = false;
-        }
 
-        
     }
 
     void OnCollisionEnter(Collision col)
@@ -67,76 +70,22 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(col.gameObject);
             source.PlayOneShot(collectableSound, 1.0f);
-            health = health + 10.0f;
-            appleCollection++;
-            SetCountText();
         }
-        ////water collectables
-        //if (col.gameObject.name == "Collectable" || col.gameObject.name == "Collectable1" || col.gameObject.name == "Collectable2" || col.gameObject.name == "Collectable3")
-        //{
-        //    Destroy(col.gameObject);
-        //    source.PlayOneShot(collectableSound, 1.0f);
-        //    waterCollection++;
-        //    SetCountText();
-        //}
-        if (col.gameObject.name == "SandGround")
-        {
-            sandGround = true;
-        }
-        else
-        if (col.gameObject.name == "WaterGround")
-        {
-            sandGround = false;
-            waterGround = true;
-        }
-        else
-        if (col.gameObject.name == "DirtGround")
-        {
-            waterGround = false;
-            dirtGround = true;
-        };
     }
 
-    public void SetCountText()
+    void LateUpdate()
     {
-        appleCollectionText.text = " " + appleCollection.ToString();
-        waterCollectionText.text = " " + waterCollection.ToString();
+        //applies force
+        force = new Vector3((xForce * 2), 0.0F, (zForce * 2));
+
+        // rotate object to face mouse direction
+        rb.transform.localEulerAngles = new Vector3(0.0f, yaw, 0.0F);
+        //rb.transform.localEulerAngles = new Vector3(pitch, 0.0f, 0.0F);
+
+        // move object in facing direction relative to local (AddRelative) not world (AddForce) coordinates
+        rb.AddRelativeForce(force);
+
     }
 
-    public void walkingAudio()
-    {
-        if (walking == true)
-        {
-            //chooses a random component of the array to play
-            //Debug.Log("playing walking sound");
-            AudioClip nextclip = footsteps[Random.Range(0, footsteps.Length)];
-            source2.clip = nextclip;
-            source2.Play();
-        }
-        
-        //**waterwalking sounding bad**//
-        //else if (walking == true && waterGround == true)
-        //{
-        //    source2.Pause();
-        //    float vol = Random.Range(0.5f, 1.0f);
-        //    source2.PlayOneShot(waterWalking, vol);
-        //    //source2.clip = waterWalking;
-        //    //source2.Play();
-        //}
-
-        else
-        {
-            //stop walking sound
-            source2.Pause();
-        }
-    }
-
-
-        void LateUpdate()
-    {
-
-        //asign health value to slider
-        healthSlider.value = health;
-    }
 
 }
